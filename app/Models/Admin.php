@@ -16,6 +16,14 @@ class Admin extends Model
         'password_confirm',
     ];
 
+    protected $table = 'admin';
+
+    protected $hidden = [
+        'password_admins',
+        'password_confirm',
+        'remember_token',
+    ];
+
     
     public function setPasswordAdminsAttribute($password)
     {
