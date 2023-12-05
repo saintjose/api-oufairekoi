@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name_places');
             $table->foreignId('location_id')->constrained('locations');
-            $table->foreignId('categorie_id')->constrained('categories');
+            $table->foreignId('category_id')->constrained('categories');
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
             $table->timestamps();
