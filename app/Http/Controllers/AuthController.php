@@ -14,10 +14,13 @@ class AuthController extends BaseController
 
     public function signin(Request $request)
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => bcrypt($request->password)])){ 
+        $userData = $request->only(['email', 'password']);
+        $credentials = Auth::attempt($userData);
+
+        if($credentials){ 
             $authUser = Auth::user(); 
             $success['token'] =  $authUser->createToken('oufairekoi@pp')->plainTextToken; 
-            $success['name'] =  $authUser->name;
+            $success['user'] =  $authUser;
 
             return $this->sendResponse($success, 'Utilisateur connecté');
         } 
@@ -45,8 +48,8 @@ class AuthController extends BaseController
         $checkEmail = User::where('email', $input['email'])->first();
         
         if(!$checkEmail) {
-            $user = User::create($input);
             $input['password'] = bcrypt($input['password']);
+            $user = User::create($input);
             $success['token'] =  $user->createToken('oufairekoi@pp')->plainTextToken;
             $success['name'] =  $user->name;
 
