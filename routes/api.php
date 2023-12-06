@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\LocationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,4 +27,5 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::resource('cities', CityController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('subcategories', SubCategoryController::class);
+    Route::resource('locations', LocationController::class);
 });
