@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\SubcategoriesController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +19,7 @@ use App\Http\Controllers\AuthController;
 */
 Route::post('login', [AuthController::class, 'signin']);
 Route::post('register', [AuthController::class, 'signup']);
+
+Route::middleware('auth:sanctum')->group( function () {
+    Route::resource('cities', CityController::class);
+});
