@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\SubcategoriesController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,4 +23,5 @@ Route::post('register', [AuthController::class, 'signup']);
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::resource('cities', CityController::class);
+    Route::resource('categories', CategoryController::class);
 });

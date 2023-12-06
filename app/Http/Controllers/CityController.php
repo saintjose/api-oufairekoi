@@ -17,7 +17,6 @@ class CityController extends BaseController
     {
         $cities = City::all();
         return $this->sendResponse(CityResource::collection($cities), 'Toutes les villes.');
-
     }
 
     /**
@@ -89,7 +88,9 @@ class CityController extends BaseController
      */
     public function destroy(City $city)
     {
-        $city->delete();
-        return $this->sendResponse([], 'Ville Supprimer.');
+        if($city->delete()) {
+            return $this->sendResponse([], 'Ville Supprimer.');
+        }
+        return $this->sendError('Impossible de supprimer cette ville');
     }
 }
