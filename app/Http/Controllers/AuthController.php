@@ -22,7 +22,7 @@ class AuthController extends BaseController
             return $this->sendResponse($success, 'Utilisateur connecté');
         } 
         else{ 
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised'], 401);
         } 
     }
 
