@@ -14,7 +14,12 @@ class Category extends Model
         'description_categories',
     ];
 
-    // Define relationship
+    // Définir la relation avec la clé étrangère 
+    public function locations()
+    {
+        return $this->hasManyThrough(Location::class, SubCategory::class, 'categorie_id', 'subcategory_id', 'id', 'id');
+    }
+
     public function subcategories()
     {
         return $this->hasMany(SubCategory::class, 'categorie_id');

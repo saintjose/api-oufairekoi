@@ -7,6 +7,14 @@ use Validator;
 use App\Http\Controllers\BaseController as BaseController;
 use App\Models\Location;
 use App\Http\Resources\LocationResource;
+use App\Http\Resources\PlaceResource;
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\SubcategoryResource;
+use App\Http\Resources\CityResource;
+use App\Models\Category;
+use App\Models\Subcategory;
+use App\Models\Place;
+use App\Models\City;
 
 class LocationController extends BaseController
 {
@@ -96,5 +104,94 @@ class LocationController extends BaseController
             return $this->sendResponse([], 'Quartier Supprimer.');
         }
         return $this->sendError('Impossible de supprimer cette Quartier');
+    }
+
+    public function listByCategory()
+    {
+        try {
+            // Récupérez toutes les catégories
+            $categories = Category::with('locations')->get();
+
+            // Transformez les données pour inclure les locations de chaque catégorie
+            $result = $categories->map(function ($category) {
+                return [
+                    'category' => $category->name_categories,
+                    'locations' => LocationResource::collection($category->locations),
+                ];
+            });
+
+            return $this->sendResponse($result, 'Quartiers par catégorie.');
+        } catch (\Exception $e) {
+            // Log the exception details
+            \Log::error('Error in LocationController listByCategory: ' . $e->getMessage());
+
+            // Return a generic error response
+            return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
+        }
+    }
+
+    public function listByRank()
+    {
+        try {
+            // Récupérez toutes les sous-catégories avec les emplacements triés par rang décroissant
+            $subcategories = Subcategory::with(['locations' => function ($query) {
+                $query->orderByDesc('rank');
+            }])->get();
+
+            // Transformez les données pour inclure les emplacements de chaque sous-catégorie
+            $result = $subcategories->map(function ($subcategory) {
+                return [
+                    'subcategory' => $subcategory->name_subcategories,
+                    'locations' => LocationResource::collection($subcategory->locations),
+                ];
+            });
+
+            return $this->sendResponse($result, 'Locations triées par rang décroissant pour chaque sous-catégorie.');
+        } catch (\Exception $e) {
+            // Log the exception details
+            \Log::error('Error in LocationController listByRank: ' . $e->getMessage());
+
+            // Return a generic error response
+            return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
+        }
+    }
+
+    /**
+     * Search for a place, category, subcategory, or city.
+     */
+    public function search(Request $request)
+    {
+        try {
+            // Récupérez le terme de recherche depuis la requête
+            $searchTerm = $request->input('search_term');
+
+            // Recherchez les lieux qui correspondent au terme de recherche
+            $places = Place::where('name_places', 'like', '%' . $searchTerm . '%')->get();
+
+            // Recherchez les catégories qui correspondent au terme de recherche
+            $categories = Category::where('name_categories', 'like', '%' . $searchTerm . '%')->get();
+
+            // Recherchez les sous-catégories qui correspondent au terme de recherche
+            $subcategories = Subcategory::where('name_subcategories', 'like', '%' . $searchTerm . '%')->get();
+
+            // Recherchez les villes qui correspondent au terme de recherche
+            $cities = City::where('name_cities', 'like', '%' . $searchTerm . '%')->get();
+
+            // Transformez les résultats en format JSON
+            $result = [
+                'places' => PlaceResource::collection($places),
+                'categories' => CategoryResource::collection($categories),
+                'subcategories' => SubcategoryResource::collection($subcategories),
+                'cities' => CityResource::collection($cities),
+            ];
+
+            return $this->sendResponse($result, 'Résultats de la recherche.');
+        } catch (\Exception $e) {
+            // Log the exception details
+            \Log::error('Error in LocationController search: ' . $e->getMessage());
+
+            // Return a generic error response
+            return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
+        }
     }
 }

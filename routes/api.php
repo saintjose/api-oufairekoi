@@ -21,13 +21,21 @@ use App\Http\Controllers\PlaceController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post('login', [AuthController::class, 'signin']);
-Route::post('register', [AuthController::class, 'signup']);
+Route::post('/login', [AuthController::class, 'signin'])->name('login.post'); // Utilisation du nom 'login.post'
+Route::post('/register', [AuthController::class, 'signup']);
 
-Route::middleware('auth:sanctum')->group( function () {
+// Ajoutez la nouvelle route pour lister les quartiers par catégorie
+Route::get('/locations/categories', [LocationController::class, 'listByCategory']);
+Route::get('/locations/by-rank', [LocationController::class, 'listByRank']);
+Route::get('/locations/search', [LocationController::class, 'search']);
+
+Route::middleware('auth:sanctum')->group(function () {
     Route::resource('cities', CityController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('subcategories', SubCategoryController::class);
     Route::resource('locations', LocationController::class);
     Route::resource('places', PlaceController::class);
+
+    
+    // ... autres routes ...
 });
