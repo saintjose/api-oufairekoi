@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name_locations');
             $table->foreignId('city_id')->constrained('cities');
+            $table->foreignId('category_id')->constrained('categories');
             $table->timestamps();
         });
     }
