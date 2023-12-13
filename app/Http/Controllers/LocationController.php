@@ -24,7 +24,8 @@ class LocationController extends BaseController
      */
     public function index()
     {
-        $locations = Location::all();
+        $locations = Location::with('city')->get();
+        
         return $this->sendResponse(LocationResource::collection($locations), 'Toutes les sous categorie.');
     }
 
