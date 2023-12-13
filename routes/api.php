@@ -29,13 +29,13 @@ Route::get('/locations/categories', [LocationController::class, 'listByCategory'
 Route::get('/locations/by-rank', [LocationController::class, 'listByRank']);
 Route::get('/locations/search', [LocationController::class, 'search']);
 
+/**
+* Toutes les routes liées à l'administration 
+*/
 Route::middleware('auth:sanctum')->group(function () {
     Route::resource('cities', CityController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('subcategories', SubCategoryController::class);
     Route::resource('locations', LocationController::class);
     Route::resource('places', PlaceController::class);
-
-    
-    // ... autres routes ...
 });
