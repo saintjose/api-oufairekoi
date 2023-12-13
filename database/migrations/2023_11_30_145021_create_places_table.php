@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name_places');
             $table->foreignId('location_id')->constrained('locations')->nullOnDelete();
-            $table->foreignId('category_id')->constrained('categories')->nullOnDelete();
+            $table->integer('rank')->nullable();
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
             $table->timestamps();
