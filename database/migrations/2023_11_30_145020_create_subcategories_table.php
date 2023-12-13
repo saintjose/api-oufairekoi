@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name_subcategories');
             $table->integer('rank_subcategories');
-            $table->foreignId('category_id')->constrained('categories');
+            $table->foreignId('category_id')->constrained('categories')->onUpdate('cascade')
+            ->onDelete('cascade');
             $table->timestamps();
         });
     }
