@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('locations', function (Blueprint $table) {
             $table->id();
             $table->string('name_locations');
-            $table->foreignId('city_id')->constrained('cities')->nullOnDelete();
-            $table->foreignId('category_id')->constrained('categories')->nullOnDelete();
+            $table->unsignedBigInteger('city_id');
+            $table->foreign('city_id')->references('id')->on('cities');
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories');
             $table->timestamps();
         });
     }

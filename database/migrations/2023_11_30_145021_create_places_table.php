@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('places', function (Blueprint $table) {
             $table->id();
             $table->string('name_places');
-            $table->foreignId('location_id')->constrained('locations')->nullOnDelete();
+            $table->unsignedBigInteger('location_id');
+            $table->foreign('location_id')->references('id')->on('locations');
             $table->integer('rank')->nullable();
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
