@@ -29,6 +29,7 @@ Route::get('/locations/listByCategory/{categoryId}', [LocationController::class,
 Route::get('/locations/listByRank', [LocationController::class, 'listByRank']);
 Route::get('/search', [LocationController::class, 'search'])->name('locations.search');
 Route::get('/locations/{slug}', [LocationController::class, 'showBySlug']);
+Route::get('/places/{id}/with-relations', [PlaceController::class, 'showWithRelations']);
 
 /**
 * Toutes les routes liées à l'administration 
