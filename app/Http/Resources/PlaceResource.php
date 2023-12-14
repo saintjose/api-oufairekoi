@@ -21,6 +21,8 @@ class PlaceResource extends JsonResource
             'category_id' => $this->category_id,
             'longitude' => $this->longitude,
             'latitude' => $this->latitude,
+            'locations' => $this->locations,
+            'category' => $this->category,
             'created_at' => $this->created_at->format('m/d/Y'),
             'updated_at' => $this->updated_at->format('m/d/Y')
         ];
