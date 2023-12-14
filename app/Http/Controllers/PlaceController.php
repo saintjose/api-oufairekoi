@@ -47,6 +47,7 @@ class PlaceController extends BaseController
         }
         $place = new Place;
         $place->name_places = $input['name_places'];
+        $place->rank = $input['rank'];
         $place->location_id = $input['location_id'];
         $place->category_id = $input['category_id'];
         $place->longitude = $input['longitude'];
@@ -84,6 +85,7 @@ class PlaceController extends BaseController
         
         $validator = Validator::make($input, [
             'name_places' => 'required',
+            'rank' => 'required',
             'location_id' =>'required',
             'category_id' => 'required',
             'longitude' => 'required',
@@ -93,6 +95,7 @@ class PlaceController extends BaseController
             return $this->sendError($validator->errors());       
         }
         $place->name_places = $input['name_places'];
+        $place->rank = $input['rank'];
         $place->location_id = $input['location_id'];
         $place->latitude = $input['latitude'];
         $place->category_id = $input['category_id'];

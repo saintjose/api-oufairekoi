@@ -25,9 +25,10 @@ Route::post('/login', [AuthController::class, 'signin'])->name('login.post'); //
 Route::post('/register', [AuthController::class, 'signup']);
 
 // Ajoutez la nouvelle route pour lister les quartiers par catégorie
-Route::get('/locations/categories', [LocationController::class, 'listByCategory']);
-Route::get('/locations/by-rank', [LocationController::class, 'listByRank']);
-Route::get('/locations/search', [LocationController::class, 'search']);
+Route::get('/locations/listByCategory/{categoryId}', [LocationController::class, 'listByCategory']);
+Route::get('/locations/listByRank', [LocationController::class, 'listByRank']);
+Route::get('/search', [LocationController::class, 'search'])->name('locations.search');
+Route::get('/locations/{slug}', [LocationController::class, 'showBySlug']);
 
 /**
 * Toutes les routes liées à l'administration 

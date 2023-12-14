@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Location extends Model
 {
@@ -11,8 +12,8 @@ class Location extends Model
 
     protected $fillable = [
         'name_locations',
-        'city_id',
-        'category_id', 
+        'city_id', 
+        'slug',
     ];
 
     // Define relationships
@@ -21,13 +22,18 @@ class Location extends Model
         return $this->belongsTo(City::class, 'city_id');
     }
 
-    public function category()
+    public static function boot()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        parent::boot();
+
+        static::creating(function ($location) {
+            $location->slug = Str::slug($location->name_locations);
+        });
+
+        static::updating(function ($location) {
+            $location->slug = Str::slug($location->name_locations);
+        });
     }
 
-    public function subcategory()
-{
-    return $this->belongsTo(SubCategory::class, 'subcategory_id');
-}
+
 }

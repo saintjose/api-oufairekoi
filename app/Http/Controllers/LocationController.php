@@ -107,92 +107,126 @@ class LocationController extends BaseController
         return $this->sendError('Impossible de supprimer cette Quartier');
     }
 
-    public function listByCategory()
-    {
-        try {
-            // Récupérez toutes les catégories
-            $categories = Category::with('locations')->get();
+    public function listByCategory($categoryId)
+{
+    try {
+        // Récupère la catégorie par son ID
+        $category = Category::findOrFail($categoryId);
 
-            // Transformez les données pour inclure les locations de chaque catégorie
-            $result = $categories->map(function ($category) {
-                return [
-                    'category' => $category->name_categories,
-                    'locations' => LocationResource::collection($category->locations),
-                ];
-            });
+        // Récupère toutes les places associées à cette catégorie
+        $places = $category->places;
 
-            return $this->sendResponse($result, 'Quartiers par catégorie.');
-        } catch (\Exception $e) {
-            // Log the exception details
-            \Log::error('Error in LocationController listByCategory: ' . $e->getMessage());
+        // Transforme les données pour inclure les locations
+        $locations = collect();
 
-            // Return a generic error response
-            return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
+        foreach ($places as $place) {
+            // On récupère la location associée à chaque place
+            $location = $place->location;
+            
+            // On vérifie si la location n'est pas déjà dans la collection
+            if (!$locations->contains($location)) {
+                $locations->push($location);
+            }
         }
+
+        $result = [
+            'category' => $category->name_categories,
+            'locations' => LocationResource::collection($locations),
+        ];
+
+        return $this->sendResponse($result, 'Locations par catégorie.');
+    } catch (\Exception $e) {
+        // Log the exception details
+        \Log::error('Error in LocationController listByCategory: ' . $e->getMessage());
+
+        // Return a generic error response
+        return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
     }
+}
 
-    public function listByRank()
-    {
-        try {
-            // Récupérez toutes les sous-catégories avec les emplacements triés par rang décroissant
-            $subcategories = Subcategory::with(['locations' => function ($query) {
-                $query->orderByDesc('rank');
-            }])->get();
 
-            // Transformez les données pour inclure les emplacements de chaque sous-catégorie
-            $result = $subcategories->map(function ($subcategory) {
-                return [
-                    'subcategory' => $subcategory->name_subcategories,
-                    'locations' => LocationResource::collection($subcategory->locations),
-                ];
-            });
+public function listByRank()
+{
+    try {
+        // Récupérez toutes les places triées par rang décroissant
+        $places = Place::orderByDesc('rank')->get();
 
-            return $this->sendResponse($result, 'Locations triées par rang décroissant pour chaque sous-catégorie.');
-        } catch (\Exception $e) {
-            // Log the exception details
-            \Log::error('Error in LocationController listByRank: ' . $e->getMessage());
+        // Transformez les données pour inclure les locations
+        $result = $places->map(function ($place) {
+            return [
+                'place' => $place->name_places,
+                'location' => new LocationResource($place->location),
+            ];
+        });
 
-            // Return a generic error response
-            return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
-        }
+        return $this->sendResponse($result, 'Locations triées par rang décroissant.');
+    } catch (\Exception $e) {
+        // Log the exception details
+        \Log::error('Error in LocationController listByRank: ' . $e->getMessage());
+
+        // Return a generic error response
+        return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
     }
+}
 
     /**
      * Search for a place, category, subcategory, or city.
      */
     public function search(Request $request)
-    {
-        try {
-            // Récupérez le terme de recherche depuis la requête
-            $searchTerm = $request->input('search_term');
+{
+    try {
+        // Récupérez le terme de recherche depuis la requête
+        $searchTerm = $request->input('search_term');
 
-            // Recherchez les lieux qui correspondent au terme de recherche
-            $places = Place::where('name_places', 'like', '%' . $searchTerm . '%')->get();
+        // Recherchez les lieux qui correspondent au terme de recherche
+        $places = Place::where('name_places', 'like', '%' . $searchTerm . '%')->get();
 
-            // Recherchez les catégories qui correspondent au terme de recherche
-            $categories = Category::where('name_categories', 'like', '%' . $searchTerm . '%')->get();
+        // Recherchez les catégories qui correspondent au terme de recherche
+        $categories = Category::where('name_categories', 'like', '%' . $searchTerm . '%')->get();
 
-            // Recherchez les sous-catégories qui correspondent au terme de recherche
-            $subcategories = Subcategory::where('name_subcategories', 'like', '%' . $searchTerm . '%')->get();
+        // Recherchez les sous-catégories qui correspondent au terme de recherche
+        $subcategories = Subcategory::where('name_subcategories', 'like', '%' . $searchTerm . '%')->get();
 
-            // Recherchez les villes qui correspondent au terme de recherche
-            $cities = City::where('name_cities', 'like', '%' . $searchTerm . '%')->get();
+        // Recherchez les villes qui correspondent au terme de recherche
+        $cities = City::where('name_cities', 'like', '%' . $searchTerm . '%')->get();
 
-            // Transformez les résultats en format JSON
-            $result = [
-                'places' => PlaceResource::collection($places),
-                'categories' => CategoryResource::collection($categories),
-                'subcategories' => SubcategoryResource::collection($subcategories),
-                'cities' => CityResource::collection($cities),
-            ];
+        // Transformez les résultats en format JSON
+        $result = [
+            'places' => PlaceResource::collection($places),
+            'categories' => CategoryResource::collection($categories),
+            'subcategories' => SubcategoryResource::collection($subcategories),
+            'cities' => CityResource::collection($cities),
+        ];
 
-            return $this->sendResponse($result, 'Résultats de la recherche.');
-        } catch (\Exception $e) {
-            // Log the exception details
-            \Log::error('Error in LocationController search: ' . $e->getMessage());
+        return $this->sendResponse($result, 'Résultats de la recherche.');
+    } catch (\Exception $e) {
+        // Log the exception details
+        \Log::error('Error in LocationController search: ' . $e->getMessage());
 
-            // Return a generic error response
-            return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
-        }
+        // Return a generic error response
+        return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
     }
+}
+
+
+public function showBySlug(string $slug)
+{
+    try {
+        // Récupère l'emplacement par son slug
+        $location = Location::where('slug', $slug)->first();
+
+        if (is_null($location)) {
+            return $this->sendError('Cet emplacement n\'existe pas.', 404);
+        }
+
+        return $this->sendResponse(new LocationResource($location), 'Informations sur l\'emplacement.');
+    } catch (\Exception $e) {
+        // Log the exception details
+        \Log::error('Error in LocationController showBySlug: ' . $e->getMessage());
+
+        // Return a generic error response
+        return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
+    }
+}
+
 }
