@@ -63,8 +63,12 @@ class AuthController extends BaseController
     public function logout(Request $request)
     {
         try {
-            Auth::user()->currentAccessToken()->delete();
-            return $this->sendResponse([], 'Deconnexion reuissie !');
+            if(Auth::user()->currentAccessToken()->delete()) {
+                return $this->sendResponse([], 'Deconnexion reuissie !');
+            } else {
+                return $this->sendError('Vous êtes déjà hors ligne', 401);
+            }
+            
 
         } catch (\Exception $e) {
             
