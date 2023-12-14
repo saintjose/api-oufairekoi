@@ -13,7 +13,7 @@ namespace App\Models;
         protected $fillable = [
             'name_places',
             'location_id',
-            'categorie_id',
+            'category_id',
             'latitude',
             'longitude',
         ];
@@ -26,6 +26,6 @@ namespace App\Models;
     
         public function category()
         {
-            return $this->belongsTo(Category::class, 'categorie_id');
+            return $this->belongsTo(Category::class, 'category_id');
         }
     }
