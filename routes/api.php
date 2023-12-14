@@ -40,4 +40,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('subcategories', SubCategoryController::class);
     Route::resource('locations', LocationController::class);
     Route::resource('places', PlaceController::class);
+    Route::get('logout', [AuthController::class, 'logout']);
 });

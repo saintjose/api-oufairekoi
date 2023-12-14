@@ -59,4 +59,16 @@ class AuthController extends BaseController
         return $this->sendError('Cet utilisateur existe déjà');
         
     }
+
+    public function logout(Request $request)
+    {
+        try {
+            Auth::user()->currentAccessToken()->delete();
+            return $this->sendResponse([], 'Deconnexion reuissie !');
+
+        } catch (\Exception $e) {
+            
+            return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
+        }
+    }
 }
