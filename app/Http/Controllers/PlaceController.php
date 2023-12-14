@@ -16,7 +16,9 @@ class PlaceController extends BaseController
      */
     public function index()
     {
-        $places = Place::all();
+        $places = Place::with(['category', 'location' => function($query) {
+            $query->with('city');
+        }])->get();
         return $this->sendResponse(PlaceResource::collection($places), 'Toutes les sous categorie.');
     }
 
@@ -37,9 +39,10 @@ class PlaceController extends BaseController
         $validator = Validator::make($input, [
             'name_places' => 'required',
             'location_id' =>'required',
-            'category_id' => 'required',
+            'category_id' =>'required',
             'longitude' => 'required',
             'latitude' => 'required',
+            'rank' => 'required'
         ]);
 
         if($validator->fails()){
@@ -49,9 +52,10 @@ class PlaceController extends BaseController
         $place->name_places = $input['name_places'];
         $place->rank = $input['rank'];
         $place->location_id = $input['location_id'];
-        $place->category_id = $input['category_id'];
         $place->longitude = $input['longitude'];
         $place->latitude = $input['latitude'];
+        $place->category_id = $input['category_id'];
+        $place->rank = $input['rank'];
         $place->save();
         return $this->sendResponse(new PlaceResource($place), 'quartier crée.');
     }
