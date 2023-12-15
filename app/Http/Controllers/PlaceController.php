@@ -42,7 +42,9 @@ class PlaceController extends BaseController
             'category_id' =>'required',
             'longitude' => 'required',
             'latitude' => 'required',
-            'rank' => 'required'
+            'rank' => 'required',
+            'url_image_principale' => 'required|mimes:png,jpeg,jpg|max:2048',
+            'url_image_banniere' => 'required|mimes:png,jpeg,jpg|max:2048',
         ]);
 
         if($validator->fails()){
@@ -56,6 +58,13 @@ class PlaceController extends BaseController
         $place->latitude = $input['latitude'];
         $place->category_id = $input['category_id'];
         $place->rank = $input['rank'];
+        // $name_url = $request->file('file')->getClientOriginalName();
+
+        $path_url_image_principale = public_path($request->file('url_image_principale')->store('public/files'));
+        $path_url_image_banniere = public_path($request->file('url_image_banniere')->store('public/files'));
+            
+        $place->url_image_principale = $path_url_image_principale;
+        $place->url_image_banniere = $path_url_image_banniere;
         $place->save();
         return $this->sendResponse(new PlaceResource($place), 'quartier crée.');
     }
@@ -104,6 +113,31 @@ class PlaceController extends BaseController
         $place->latitude = $input['latitude'];
         $place->category_id = $input['category_id'];
         $place->longitude = $input['longitude'];
+        if(!empty($request->file('url_image_principale')) && !empty($request->file('url_image_banniere'))) {
+            
+            if(file_exists($place->url_image_principale)) {
+                unlink($place->url_image_principale);
+            }
+            
+            if(file_exists($place->url_image_banniere)) {
+                unlink($place->url_image_banniere);
+            }
+            $ext_p = $request->file('url_image_principale')->getClientOriginalExtension();
+            $filename_p = rand(100,100000) + 365 * 3024;
+            $filename_b = rand(100,100000) + 365 * 3065;
+            $path_p = $request->file('url_image_principale')->storeAs('public/' . $filename_p .'.'.$ext_p);
+
+            $ext_b = $request->file('url_image_banniere')->getClientOriginalExtension();
+            $path_b = $request->file('url_image_banniere')->storeAs('public/' . $filename_b .'.'.$ext_b);
+
+            $path_url_image_principale = url('storage/' .$filename_p .'.'. $ext_p);
+            $path_url_image_banniere = url('storage/' . $filename_b .'.'. $ext_b);
+            
+            $place->url_image_principale = $path_url_image_principale;
+            $place->url_image_banniere = $path_url_image_banniere;
+
+        }
+
         $place->save();
         
         return $this->sendResponse(new PlaceResource($place), 'Espace Modifiée.');

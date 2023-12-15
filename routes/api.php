@@ -40,5 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('subcategories', SubCategoryController::class);
     Route::resource('locations', LocationController::class);
     Route::resource('places', PlaceController::class);
+    Route::post('places/{place}', [PlaceController::class, 'update']);
     Route::get('logout', [AuthController::class, 'logout']);
 });

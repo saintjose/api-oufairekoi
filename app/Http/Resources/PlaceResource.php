@@ -24,6 +24,8 @@ class PlaceResource extends JsonResource
             'location' => $this->location,
             'category' => $this->category,
             'rank' => $this->rank,
+            'url_image_principale' => $this->url_image_principale,
+            'url_image_banniere' => $this->url_image_banniere,
             'created_at' => $this->created_at->format('m/d/Y'),
             'updated_at' => $this->updated_at->format('m/d/Y')
         ];
