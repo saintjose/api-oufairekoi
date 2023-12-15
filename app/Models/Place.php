@@ -17,6 +17,8 @@ namespace App\Models;
             'category_id',
             'latitude',
             'longitude',
+            'url_image_principale',
+            'url_image_banniere',
         ];
     
         // 
@@ -30,8 +32,8 @@ namespace App\Models;
              return $this->belongsTo(Category::class, 'category_id');
         }
 
-        public function images()
+        public function image()
         {
-            return $this->hasMany(Image::class);
+             return $this->hasOne(Image::class, 'place_id');
         }
 }

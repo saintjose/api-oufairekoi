@@ -123,19 +123,15 @@ class PlaceController extends BaseController
     public function showWithRelations($id)
     {
         try {
-            // Récupère la place par son ID avec les relations chargées
-            $place = Place::with('location', 'category')->find($id);
-
+            $place = Place::with(['location', 'category', 'image'])->find($id);
+    
             if (is_null($place)) {
                 return $this->sendError('Cette place n\'existe pas.', 404);
             }
-
+    
             return $this->sendResponse(new PlaceResource($place), 'Informations sur la place avec relations.');
         } catch (\Exception $e) {
-            // Log the exception details
             \Log::error('Error in PlaceController showWithRelations: ' . $e->getMessage());
-
-            // Return a generic error response
             return $this->sendError('Une erreur interne du serveur s\'est produite.', 500);
         }
     }
