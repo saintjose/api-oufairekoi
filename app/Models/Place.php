@@ -17,6 +17,8 @@ namespace App\Models;
             'category_id',
             'latitude',
             'longitude',
+            'url_image_principale',
+            'url_image_banniere',
         ];
     
         // 

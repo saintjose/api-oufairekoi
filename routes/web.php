@@ -62,6 +62,8 @@ Route::get('/add-data', function () {
         'rank' => 1,
         'latitude' => 12.345,
         'longitude' => 67.890,
+        'url_image_principale' => '/images/scolaire.jpg',
+        'url_image_banniere' => '/images/téléchargement.png',
     ]);
     $place->save();
 
